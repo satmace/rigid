@@ -50,6 +50,24 @@
   margin: 0 14px;
 } */
 
+/* Added */
+
+.marker-popup {
+  max-width: 250px;
+}
+
+.marker-popup img {
+  max-width: 100%;
+}
+
+/* .marker-popup {
+    width: 20%;
+    height: 20%;
+} */
+
+/* Till here */
+
+
 .timeline .event {
   border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
   padding-bottom: 0px;
@@ -666,6 +684,12 @@ padding-right: 10px;
       width: 110%;
       background-color:white;
   }
+
+.marker-popup {
+    width: 40%;
+    height: 40%;
+}
+
   .disp-n{
     display: none;
   }

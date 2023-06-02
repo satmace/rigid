@@ -5,77 +5,61 @@ var mapContainer = document.getElementById('map');
 var map = new mapboxgl.Map({
  container: 'map',
  style: 'mapbox://styles/mapbox/streets-v12',
-     center: [73.856255, 18.516726],
+     center: [73.856255, 21.516726],
      zoom: 5
 });
 
-// window.matchMedia("( orientation: portrait )").addEventListener("change",e=>{
-//   const portrait=e.matches;
-//   if(portrait){
-//     alert("You are in portrait, Please open this in landscape");
-//   }else{
-//     alert("You are in landscape");
-//   }
+var markers = [
+  {
+    lngLat: [73.293191, 22.257008], // [longitude, latitude] of the marker position
+    popupContent: '<img src="https://ychef.files.bbci.co.uk/976x549/p09h83yc.jpg"><h3>Vadodara</h3><p>Collection centre of Ecommer Bag</p>'
+  },
+  {
+    lngLat: [75.478192, 23.597970], // [longitude, latitude] of the marker position
+    popupContent: '<img src="https://im.indiatimes.in/media/content/2019/Mar/global_recycling_day_1552985398_725x725.jpg"><h3> Madhya Pradesh</h3><p>Collection centre of Ecommer Bag</p>'
+  },
 
-// });
+  {
+    lngLat: [72.493950,24.110878], // [longitude, latitude] of the marker position
+    popupContent: '<img src="https://im.indiatimes.in/media/content/2018/Apr/plastic_1523957599.jpg"><h3>Vadgam, Gujarat</h3><p>Collection centre of Ecommer Bag</p>'
+  },
 
-// const marker1 = new mapboxgl.Marker({ color: '#55d5a5'})
-//      .setLngLat([73.856255, 18.516726])
-//      .addTo(map);
+  {
+    lngLat: [74.516593,21.831092], // [longitude, latitude] of the marker position
+    popupContent: '<img src="https://en-media.thebetterindia.com/uploads/2019/04/IMG_7020.jpg"><h3>Pati, Madhya Pradesh</h3><p>Collection centre of Ecommer Bag</p>'
+  },
 
-//      const marker2 = new mapboxgl.Marker({ color: '#55d5a5', rotation: 45 })
-//      .setLngLat([74.576782, 18.150663])
-//      .addTo(map);
+  {
+    lngLat: [74.832818, 20.867474], // [longitude, latitude] of the marker position
+    popupContent: '<img src="https://indian-retailer.s3.ap-south-1.amazonaws.com/s3fs-public/article5615.jpg"><h3>Dhule , Maharashtra</h3><p>Collection centre of Ecommer Bag</p>'
+  },
 
-//      const marker3 = new mapboxgl.Marker({ color: '#55d5a5'})
-//      .setLngLat([72.7474142,  20.1924098])
-//      .addTo(map);
+  {
+    lngLat: [73.843388, 19.920099], // [longitude, latitude] of the marker position
+    popupContent: '<img src="https://images.yourstory.com/cs/5/571d59d0-2d6c-11e9-aa97-9329348d4c3e/Untitled_design-81559651782782.png"><h3>Nashik, Maharashtra</h3><p>Collection centre of Ecommer Bag</p>'
+  }
+  // Add more markers here if needed
+];
 
-const markerCoords = [
-    //  [73.856255, 18.516726],
-    //  [74.576782, 18.150663],
-    //  [72.7474142, 20.1924098]
-        [72.7474142, 21.1924098],
-        [72.8199922, 22.1924882],
-        [75.56835,20.99685]
-   ];
-   const markers = markerCoords.map(coord => {
-     return new mapboxgl.Marker({ color: '#55d5a5'})
-        .setLngLat(coord)
-        .addTo(map);
-   });
-   
-   const featureCollection = {
-     type: 'FeatureCollection',
-     features: [{
-       type: 'Feature',
-       geometry: {
-         type: 'LineString',
-         coordinates: markerCoords
-       }
-     }]
-   };
-   
-   map.on('load', function() {
-     map.addSource('line', {
-       type: 'geojson',
-       data: featureCollection
-     });
-     
-     map.addLayer({
-       id: 'line-layer',
-      //  type: 'line',
-      //  source: 'line',
-       layout: {
-         'line-cap': 'round',
-         'line-join': 'round'
-       },
-       paint: {
-         'line-color': '#55d5a5',
-         'line-width': 3
-       }
-     });
-   });
+// Create markers and popups dynamically
+markers.forEach(function(markerInfo) {
+  var marker = new mapboxgl.Marker()
+    .setLngLat(markerInfo.lngLat)
+    .addTo(map);
+
+  var popup = new mapboxgl.Popup({ className: 'marker-popup' }).setHTML(markerInfo.popupContent);
+
+  marker.getElement().addEventListener('click', function () {
+    if (marker.getPopup()) {
+      marker.setPopup(null);
+    } else {
+      marker.setPopup(popup);
+    }
+  });
+});
+
+map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new mapboxgl.FullscreenControl());
 
 
 
@@ -86,297 +70,291 @@ const markerCoords = [
 var map2 = new mapboxgl.Map({
  container: 'map2',
  style: 'mapbox://styles/mapbox/streets-v12',
- center: [75.856255, 18.516726],
- zoom: 4
+ center: [75.856255, 20.516726],
+ zoom: 6
 
 });
 
-     const markerCoords1 = [
-          // [72.7474142,  20.1924098],
-          // [73.856255, 18.516726],
-          // [74.576782, 18.150663],
-          // [72.911453,  20.385181]
-          [72.7474142, 22.1924098],  
-          [73.911453,  19.385181],
-          [75.56835,21.99685],  //added
-          [75.56835,20.99685],
-          
-          // [72.7474142, 22.1924098], //Added
-          // [73.911453,  19.395181]
-        ];
-        const markers1 = markerCoords1.map((coord, index) => {
-          const color = (index === 1) ? '#55d5a5' : '#9b9b9b';
-          return new mapboxgl.Marker({ color })
-            .setLngLat(coord)
-            .addTo(map2);
-            
-        });
- 
-        
+  map2.on('load', function() {
+      var start = [72.877655, 19.075983];
+      var destinations = [
+        [74.7749,20.9042],
+        [74.173257, 21.975842],
+        [73.243896, 22.264793],
+        // Add more destination points as needed
+      ];
 
-        const featureCollection1 = {
-          type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              geometry: {
-                type: 'LineString',
-                coordinates: markerCoords1.slice(0,1),
-                coordinates: markerCoords1.slice(0,2),
-                coordinates: markerCoords1.slice(0,3)
-                
-              },
-              
-              properties: {
-                'stroke': '#55d5a5',   //#9b9b9b
-                'stroke-width': 3
+      var coordinates = [];
+      destinations.forEach(function(destination) {
+        coordinates.push(start);
+        coordinates.push(destination);
+      });
+
+      // Get route from Mapbox Directions API
+      var apiUrl = 'https://api.mapbox.com/directions/v5/mapbox/driving/';
+      apiUrl += coordinates.join(';');
+      apiUrl += '?steps=true&geometries=geojson&access_token=' + mapboxgl.accessToken;
+
+      fetch(apiUrl)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          var route = data.routes[0].geometry;
+
+          map2.addLayer({
+            id: 'route',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: route
               }
             },
-            {
-              type: 'Feature',
-              geometry: {
-                type: 'LineString',
-                coordinates: [markerCoords1[0], markerCoords1[3]],
-                coordinates: [markerCoords1[1], markerCoords1[3]],
-                // coordinates: [markerCoords1[2], markerCoords1[3]]
-              },
-              properties: {
-                'stroke': '#55d5a5',
-                'stroke-width': 3
-              }
-            }
-          ]
-        };
-
-
-        map2.on('load', function() {
-          map2.addSource('line', {
-            type: 'geojson',
-            data: featureCollection1,
-          });
-
-          
-        
-          map2.addLayer({
-            id: 'line-layer',
-            type: 'line',
-            source: 'line',
             paint: {
-              'line-color': ['get', 'stroke'],
-              'line-width': ['get', 'stroke-width']
+              'line-color': '#55d5a5',
+              'line-width': 4
             }
           });
+
+
+
+          // Add marker at start point
+          var startMarker = new mapboxgl.Marker()
+              .setLngLat(start)
+              .addTo(map2);
+
+          // Add markers at destination points
+          destinations.forEach(function(destination) {
+            var marker = new mapboxgl.Marker()
+              .setLngLat(destination)
+              .addTo(map2);
+          });
+
+          var bounds = new mapboxgl.LngLatBounds();
+          coordinates.forEach(function(coord) {
+            bounds.extend(coord);
+          });
+          map2.fitBounds(bounds, { padding: 40 });
         });
-
-     
-     
-     var mapContainer3 = document.getElementById('map3');
-var map3 = new mapboxgl.Map({
- container: 'map3',
- style: 'mapbox://styles/mapbox/streets-v12',
-     center: [72.9968,  20.50095],
-     zoom: 6
-});
-// const marker5 = new mapboxgl.Marker({ color: '#55d5a5'})
-//      .setLngLat([72.9968,  20.50095])
-//      .addTo(map3);
+    });
 
 
-//      const marker16 = new mapboxgl.Marker({ color: '#e8e8e8'})
-//      .setLngLat([72.911453,  20.385181])
-//      .addTo(map3);
+    
+    map2.addControl(new mapboxgl.NavigationControl());
+    map2.addControl(new mapboxgl.FullscreenControl());
+    
 
-//      const marker13 = new mapboxgl.Marker({ color: '#e8e8e8'})
-//      .setLngLat([73.856255, 18.516726])
-//      .addTo(map3);
-
-//      const marker14 = new mapboxgl.Marker({ color: '#e8e8e8' })
-//      .setLngLat([74.576782, 18.150663])
-//      .addTo(map3);
-
-//      const marker15 = new mapboxgl.Marker({ color: '#e8e8e8'})
-//      .setLngLat([72.7474142,  20.1924098])
-//      .addTo(map3);
-
-     const markerCoords2 = [
-          // [74.576782, 18.150663],
-          // [73.856255, 18.516726],
-          
-          // [72.7474142,  20.1924098],
-          // [72.911453,  20.385181],
-          // [72.9968,  20.50095]
-          [72.7474142, 21.1924098],  //added
-          [73.911453,  19.385181],  //added
-          [73.856255, 18.516726]
-        ];
-       
-const markers2 = markerCoords2.map((coord, index) => {
-     const color = (index === 2) ? '#55d5a5' : '#9b9b9b';
-     return new mapboxgl.Marker({ color })
-       .setLngLat(coord)
-       .addTo(map3);
-   });
-   
-   const featureCollection2 = {
-     type: 'FeatureCollection',
-     features: [
-       {
-         type: 'Feature',
-         geometry: {
-           type: 'LineString',
-           coordinates: markerCoords2.slice(0, 2)
-         },
-         properties: {
-           'stroke': '#9b9b9b',
-           'stroke-width': 3
-         }
-       },
-       {
-         type: 'Feature',
-         geometry: {
-           type: 'LineString',
-           coordinates: [markerCoords2[1], markerCoords2[2]]
-         },
-         properties: {
-           'stroke': '#55d5a5',
-           'stroke-width': 3
-         }
-       }
-     ]
-   };
-   
-   map3.on('load', function() {
-     map3.addSource('line', {
-       type: 'geojson',
-       data: featureCollection2
-     });
-   
-     map3.addLayer({
-       id: 'line-layer',
-       type: 'line',
-       source: 'line',
-       paint: {
-         'line-color': ['get', 'stroke'],
-         'line-width': ['get', 'stroke-width']
-       }
-     });
-   });
+  
 
 
 
+    var mapContainer3 = document.getElementById('map3');
+    var map3 = new mapboxgl.Map({
+      container: 'map3',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [72.9968, 20.50095],
+      zoom: 6
+    });
+    
+    map3.on('load', function() {
+      var points = [
+        { name: 'A', coordinates: [72.877655, 19.075983] },
+        { name: 'B', coordinates: [74.7749, 20.9042] },
+        { name: 'C', coordinates: [73.8567, 18.5204] }
+        // Add more points as needed
+      ];
+    
+      var coordinatesAB = [points[0].coordinates, points[1].coordinates];
+      var coordinatesBC = [points[0].coordinates, points[2].coordinates];
+    
+      // Get route from Mapbox Directions API (A to B)
+      var apiUrlAB = 'https://api.mapbox.com/directions/v5/mapbox/driving/';
+      apiUrlAB += coordinatesAB.join(';');
+      apiUrlAB += '?steps=true&geometries=geojson&access_token=' + mapboxgl.accessToken;
+    
+      // Get route from Mapbox Directions API (B to C)
+      var apiUrlBC = 'https://api.mapbox.com/directions/v5/mapbox/driving/';
+      apiUrlBC += coordinatesBC.join(';');
+      apiUrlBC += '?steps=true&geometries=geojson&access_token=' + mapboxgl.accessToken;
+    
+      // Fetch A to B route
+      fetch(apiUrlAB)
+        .then(function(responseAB) {
+          return responseAB.json();
+        })
+        .then(function(dataAB) {
+          var routeAB = dataAB.routes[0].geometry;
+    
+          map3.addLayer({
+            id: 'routeAB',
+            type: 'line',
+            source: {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: routeAB
+              }
+            },
+            paint: {
+              'line-color': '#55d5a5',
+              'line-width': 4
+            }
+          });
+    
+          // Fetch B to C route
+          fetch(apiUrlBC)
+            .then(function(responseBC) {
+              return responseBC.json();
+            })
+            .then(function(dataBC) {
+              var routeBC = dataBC.routes[0].geometry;
+    
+              map3.addLayer({
+                id: 'routeBC',
+                type: 'line',
+                source: {
+                  type: 'geojson',
+                  data: {
+                    type: 'Feature',
+                    geometry: routeBC
+                  }
+                },
+                paint: {
+                  'line-color': '#55d5a5',
+                  'line-width': 4
+                }
+              });
+    
+              // Add markers at points
+              points.forEach(function(point) {
+                var marker = new mapboxgl.Marker()
+                  .setLngLat(point.coordinates)
+                  .addTo(map3);
+              });
+    
+              var bounds = new mapboxgl.LngLatBounds();
+              points.forEach(function(point) {
+                bounds.extend(point.coordinates);
+              });
+              map3.fitBounds(bounds, { padding: 40 });
+            });
+        });
+    });
+    
 
-
-
-
-
-
-
-
+    map3.addControl(new mapboxgl.NavigationControl());
+    map3.addControl(new mapboxgl.FullscreenControl());
 
 
 
 
  
-     var mapContainer4 = document.getElementById('map4');
-     var map4 = new mapboxgl.Map({
+var mapContainer4 = document.getElementById('map4');
+var map4 = new mapboxgl.Map({
  container: 'map4',
  style: 'mapbox://styles/mapbox/streets-v12',
      center: [72.7474142,  20.1924098],
      zoom: 6
 });
-// const marker6 = new mapboxgl.Marker({ color: '#55d5a5'})
-//      .setLngLat([72.7474142,  20.1924098])
-//      .addTo(map4);
-
-//      const marker20 = new mapboxgl.Marker({ color: '#e8e8e8'})
-//      .setLngLat([72.9968,  20.50095])
-//      .addTo(map4);
 
 
-//      const marker21 = new mapboxgl.Marker({ color: '#e8e8e8'})
-//      .setLngLat([72.911453,  20.385181])
-//      .addTo(map4);
+const start = [72.831062, 21.170240];
+    const end = [73.933039, 19.133167];
 
-//      const marker23 = new mapboxgl.Marker({ color: '#e8e8e8'})
-//      .setLngLat([73.856255, 18.516726])
-//      .addTo(map4);
+    const directionsRequest = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
-//      const marker24 = new mapboxgl.Marker({ color: '#e8e8e8' })
-//      .setLngLat([74.576782, 18.150663])
-//      .addTo(map4);
+    map4.on('load', async () => {
+        const response = await fetch(directionsRequest);
+        const data = await response.json();
 
-     // const marker25 = new mapboxgl.Marker({ color: '#e8e8e8'})
-     // .setLngLat([72.7474142,  20.1924098])
-     // .addTo(map4);
+        const geojson = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: data.routes[0].geometry
+                }
+            ]
+        };
+
+        map4.addSource('line', {
+            type: 'geojson',
+            data: geojson
+        });
+
+        // Add line layer
+        map4.addLayer({
+            type: 'line',
+            source: 'line',
+            id: 'line-layer',
+            paint: {
+                'line-color': '#55d5a5',
+                'line-width': 4,
+                // 'line-dasharray': [1, 4, 2]
+            }
+        });
+
+        // Add markers at start and end points
+        new mapboxgl.Marker({ color: '#55d5a5' })
+            .setLngLat(start)
+            .addTo(map4);
+
+        new mapboxgl.Marker({ color: '#55d5a5' })
+            .setLngLat(end)
+            .addTo(map4);
+
+        // Add a moving object along the line
+        const objectMarker = new mapboxgl.Marker({ color: 'blue' })
+            .setLngLat(start)
+            .addTo(map4);
+
+        let currentCoordinateIndex = 0;
+        const coordinates = data.routes[0].geometry.coordinates;
+
+        function moveObject() {
+            if (currentCoordinateIndex < coordinates.length - 1) {
+                currentCoordinateIndex++;
+            } else {
+                currentCoordinateIndex = 0;
+            }
+
+            const startPoint = coordinates[currentCoordinateIndex];
+            const endPoint = coordinates[currentCoordinateIndex + 1];
+
+            const startTime = new Date().getTime();
+            const duration = 200; // Animation duration in milliseconds
+
+            function animateMarker() {
+                const currentTime = new Date().getTime();
+                const elapsed = currentTime - startTime;
+                const progress = elapsed / duration;
+
+                const lng = startPoint[0] + (endPoint[0] - startPoint[0]) * progress;
+                const lat = startPoint[1] + (endPoint[1] - startPoint[1]) * progress;
+
+                objectMarker.setLngLat([lng, lat]);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateMarker);
+                } else {
+                    moveObject(); // Move to the next segment of the line
+                }
+            }
+
+            animateMarker();
+        }
+
+        moveObject();
+    });
 
 
-     const markerCoords3 = [
-          
-          // [73.856255, 18.516726],
-          // [74.576782, 18.150663],
-          // [72.911453,  20.385181],
-          // [72.7474142,  20.1924098],
-          // [72.9968,  20.50095],
-          
-          // [72.7474142,  20.1924098]
-            [72.7474142, 21.1924098],  //added
-            [73.911453,  19.385181],  //added
-            [73.856255, 18.516726],    //added
-            [72.976782, 19.150663],
-        ];
-       
-const markers3 = markerCoords3.map((coord, index) => {
-     const color = (index === 3) ? '#55d5a5' : '#9b9b9b';
-     return new mapboxgl.Marker({ color })
-       .setLngLat(coord)
-       .addTo(map4);
-   });
-   
-   const featureCollection3 = {
-     type: 'FeatureCollection',
-     features: [
-       {
-         type: 'Feature',
-         geometry: {
-           type: 'LineString',
-           coordinates: markerCoords3.slice(0, 3)
-         },
-         properties: {
-           'stroke': '#9b9b9b',
-           'stroke-width': 3
-         }
-       },
-       {
-         type: 'Feature',
-         geometry: {
-           type: 'LineString',
-           coordinates: [markerCoords3[2], markerCoords3[3]]
-         },
-         properties: {
-           'stroke': '#55d5a5',
-           'stroke-width': 3
-         }
-       }
-     ]
-   };
-   
-   map4.on('load', function() {
-     map4.addSource('line', {
-       type: 'geojson',
-       data: featureCollection3
-     });
-   
-     map4.addLayer({
-       id: 'line-layer',
-       type: 'line',
-       source: 'line',
-       paint: {
-         'line-color': ['get', 'stroke'],
-         'line-width': ['get', 'stroke-width']
-       }
-     });
-   });
 
+
+    map4.addControl(new mapboxgl.NavigationControl());
+    map4.addControl(new mapboxgl.FullscreenControl());
 
 
 
