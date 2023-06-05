@@ -260,95 +260,207 @@ var map4 = new mapboxgl.Map({
 });
 
 
-const start = [72.831062, 21.170240];
-    const end = [73.933039, 19.133167];
 
-    const directionsRequest = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+const start = [72.960200, 23.591800];
+const end = [73.933039, 19.133167];
 
-    map4.on('load', async () => {
-        const response = await fetch(directionsRequest);
-        const data = await response.json();
+const directionsRequest = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
-        const geojson = {
-            type: 'FeatureCollection',
-            features: [
-                {
-                    type: 'Feature',
-                    properties: {},
-                    geometry: data.routes[0].geometry
-                }
-            ]
-        };
+map4.on('load', async () => {
+    const response = await fetch(directionsRequest);
+    const data = await response.json();
 
-        map4.addSource('line', {
-            type: 'geojson',
-            data: geojson
-        });
-
-        // Add line layer
-        map4.addLayer({
-            type: 'line',
-            source: 'line',
-            id: 'line-layer',
-            paint: {
-                'line-color': '#55d5a5',
-                'line-width': 4,
-                // 'line-dasharray': [1, 4, 2]
+    const geojson = {
+        type: 'FeatureCollection',
+        features: [
+            {
+                type: 'Feature',
+                properties: {},
+                geometry: data.routes[0].geometry
             }
-        });
+        ]
+    };
 
-        // Add markers at start and end points
-        new mapboxgl.Marker({ color: '#55d5a5' })
-            .setLngLat(start)
-            .addTo(map4);
+    map4.addSource('line', {
+        type: 'geojson',
+        data: geojson
+    });
 
-        new mapboxgl.Marker({ color: '#55d5a5' })
-            .setLngLat(end)
-            .addTo(map4);
+    // Add line layer
+    map4.addLayer({
+        type: 'line',
+        source: 'line',
+        id: 'line-layer',
+        paint: {
+            'line-color': '#55d5a5',
+            'line-width': 4,
+            // 'line-dasharray': [0, 4, 3]
+        }
+    });
 
-        // Add a moving object along the line
-        const objectMarker = new mapboxgl.Marker({ color: 'blue' })
-            .setLngLat(start)
-            .addTo(map4);
+    new mapboxgl.Marker({ color: '#13BEE1' })
+        .setLngLat(start)
+        .addTo(map4);
 
-        let currentCoordinateIndex = 0;
-        const coordinates = data.routes[0].geometry.coordinates;
+    new mapboxgl.Marker({ color: '#13BEE1' })
+        .setLngLat(end)
+        .addTo(map4);
 
-        function moveObject() {
-            if (currentCoordinateIndex < coordinates.length - 1) {
-                currentCoordinateIndex++;
-            } else {
-                currentCoordinateIndex = 0;
-            }
+    // Add a moving object with a car icon
+    const objectMarker = new mapboxgl.Marker({
+        element: createMarkerElement('truckk.png'), // Replace 'car-icon.png' with your custom car icon image path
+        anchor: 'bottom',
+        rotationAlignment: 'map'
+    })
+    .setLngLat(start)
+    .addTo(map4);
 
-            const startPoint = coordinates[currentCoordinateIndex];
-            const endPoint = coordinates[currentCoordinateIndex + 1];
+    let currentCoordinateIndex = 0;
+    const coordinates = data.routes[0].geometry.coordinates;
+    const totalDistance = data.routes[0].distance;
 
-            const startTime = new Date().getTime();
-            const duration = 200; // Animation duration in milliseconds
+    const distanceElement = document.createElement('div');
+    distanceElement.className = 'distance';
+    distanceElement.innerText = (totalDistance / 1000).toFixed(2) + 'km';
+    objectMarker.getElement().appendChild(distanceElement);
 
-            function animateMarker() {
-                const currentTime = new Date().getTime();
-                const elapsed = currentTime - startTime;
-                const progress = elapsed / duration;
-
-                const lng = startPoint[0] + (endPoint[0] - startPoint[0]) * progress;
-                const lat = startPoint[1] + (endPoint[1] - startPoint[1]) * progress;
-
-                objectMarker.setLngLat([lng, lat]);
-
-                if (progress < 1) {
-                    requestAnimationFrame(animateMarker);
-                } else {
-                    moveObject(); // Move to the next segment of the line
-                }
-            }
-
-            animateMarker();
+    function moveObject() {
+        if (currentCoordinateIndex < coordinates.length - 1) {
+            currentCoordinateIndex++;
+        } else {
+            return; // Stop the truck from moving in a loop
         }
 
-        moveObject();
-    });
+        const startPoint = coordinates[currentCoordinateIndex];
+        const endPoint = coordinates[currentCoordinateIndex + 1];
+
+        const startTime = new Date().getTime();
+        const duration = 350; // Animation duration in milliseconds
+
+        function animateMarker() {
+            const currentTime = new Date().getTime();
+            const elapsed = currentTime - startTime;
+            const progress = elapsed / duration;
+
+            const lng = startPoint[0] + (endPoint[0] - startPoint[0]) * progress;
+            const lat = startPoint[1] + (endPoint[1] - startPoint[1]) * progress;
+
+            objectMarker.setLngLat([lng, lat]);
+
+            if (progress < 1) {
+                requestAnimationFrame(animateMarker);
+            } else {
+                moveObject(); // Move to the next segment of the line
+            }
+        }
+
+        animateMarker();
+    }
+
+    moveObject();
+});
+
+// Helper function to create a custom marker element
+function createMarkerElement(iconUrl) {
+    const marker = document.createElement('div');
+    marker.className = 'custom-marker';
+    marker.style.backgroundImage = `url(${iconUrl})`;
+    marker.style.width = '40px';
+    marker.style.height = '40px';
+    marker.style.backgroundSize = 'cover';
+
+    return marker;
+}
+
+// const start = [72.831062, 21.170240];
+//     const end = [73.933039, 19.133167];
+
+//     const directionsRequest = `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+//     map4.on('load', async () => {
+//         const response = await fetch(directionsRequest);
+//         const data = await response.json();
+
+//         const geojson = {
+//             type: 'FeatureCollection',
+//             features: [
+//                 {
+//                     type: 'Feature',
+//                     properties: {},
+//                     geometry: data.routes[0].geometry
+//                 }
+//             ]
+//         };
+
+//         map4.addSource('line', {
+//             type: 'geojson',
+//             data: geojson
+//         });
+
+//         // Add line layer
+//         map4.addLayer({
+//             type: 'line',
+//             source: 'line',
+//             id: 'line-layer',
+//             paint: {
+//                 'line-color': '#55d5a5',
+//                 'line-width': 4,
+//                 // 'line-dasharray': [1, 4, 2]
+//             }
+//         });
+
+//         // Add markers at start and end points
+//         new mapboxgl.Marker({ color: '#55d5a5' })
+//             .setLngLat(start)
+//             .addTo(map4);
+
+//         new mapboxgl.Marker({ color: '#55d5a5' })
+//             .setLngLat(end)
+//             .addTo(map4);
+
+//         // Add a moving object along the line
+//         const objectMarker = new mapboxgl.Marker({ color: 'blue' })
+//             .setLngLat(start)
+//             .addTo(map4);
+
+//         let currentCoordinateIndex = 0;
+//         const coordinates = data.routes[0].geometry.coordinates;
+
+//         function moveObject() {
+//             if (currentCoordinateIndex < coordinates.length - 1) {
+//                 currentCoordinateIndex++;
+//             } else {
+//                 currentCoordinateIndex = 0;
+//             }
+
+//             const startPoint = coordinates[currentCoordinateIndex];
+//             const endPoint = coordinates[currentCoordinateIndex + 1];
+
+//             const startTime = new Date().getTime();
+//             const duration = 200; // Animation duration in milliseconds
+
+//             function animateMarker() {
+//                 const currentTime = new Date().getTime();
+//                 const elapsed = currentTime - startTime;
+//                 const progress = elapsed / duration;
+
+//                 const lng = startPoint[0] + (endPoint[0] - startPoint[0]) * progress;
+//                 const lat = startPoint[1] + (endPoint[1] - startPoint[1]) * progress;
+
+//                 objectMarker.setLngLat([lng, lat]);
+
+//                 if (progress < 1) {
+//                     requestAnimationFrame(animateMarker);
+//                 } else {
+//                     moveObject(); // Move to the next segment of the line
+//                 }
+//             }
+
+//             animateMarker();
+//         }
+
+//         moveObject();
+//     });
 
 
 

@@ -52,6 +52,9 @@
 
 /* Added */
 
+.distance { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); transform: translateY(-1%);font-size: 16px; background-color: #fff; padding: 5px; }
+
+
 .marker-popup {
   max-width: 250px;
 }
