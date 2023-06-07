@@ -52,7 +52,7 @@
 
 /* Added */
 
-.distance { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); transform: translateY(-1%);font-size: 16px; background-color: #fff; padding: 5px; }
+.distance { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); font-size: 16px; background-color: #fff; padding: 5px; white-space: nowrap; }
 
 
 .marker-popup {
